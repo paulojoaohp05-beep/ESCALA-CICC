@@ -121,14 +121,23 @@ function App() {
             </div>
           </div>
 
-          {view === 'grid' ? (
+          <div className="screen-calendar">
+            {view === 'grid' ? (
+              <div className="calendar-wrap">
+                <div className="week-header">{WEEKDAYS.map((day) => <div key={day}>{day}</div>)}</div>
+                <div className="calendar-grid">{days.map((day) => <DayCard key={day.toISOString()} day={day} currentMonth={day.getMonth() === cursor.getMonth()} today={sameDay(day, today)} dimmed={!isEmphasized(getGroupForDate(day))} selectedOfficer={selectedOfficer} copied={copied === day.toISOString()} events={events} onCopy={() => copyDay(day)} />)}</div>
+              </div>
+            ) : (
+              <div className="list-view">{monthDays.map((day) => <DayListRow key={day.toISOString()} day={day} today={sameDay(day, today)} dimmed={!isEmphasized(getGroupForDate(day))} selectedOfficer={selectedOfficer} copied={copied === day.toISOString()} events={events} onCopy={() => copyDay(day)} />)}</div>
+            )}
+          </div>
+          <div className="print-calendar">
+            <h1>ESCALA CICC — {MONTHS[cursor.getMonth()].toUpperCase()} {cursor.getFullYear()}</h1>
             <div className="calendar-wrap">
               <div className="week-header">{WEEKDAYS.map((day) => <div key={day}>{day}</div>)}</div>
-              <div className="calendar-grid">{days.map((day) => <DayCard key={day.toISOString()} day={day} currentMonth={day.getMonth() === cursor.getMonth()} today={sameDay(day, today)} dimmed={!isEmphasized(getGroupForDate(day))} selectedOfficer={selectedOfficer} copied={copied === day.toISOString()} events={events} onCopy={() => copyDay(day)} />)}</div>
+              <div className="calendar-grid">{days.map((day) => <DayCard key={day.toISOString()} day={day} currentMonth={day.getMonth() === cursor.getMonth()} today={sameDay(day, today)} dimmed={false} selectedOfficer={null} copied={false} events={VISIBLE_EVENTS} onCopy={() => undefined} />)}</div>
             </div>
-          ) : (
-            <div className="list-view">{monthDays.map((day) => <DayListRow key={day.toISOString()} day={day} today={sameDay(day, today)} dimmed={!isEmphasized(getGroupForDate(day))} selectedOfficer={selectedOfficer} copied={copied === day.toISOString()} events={events} onCopy={() => copyDay(day)} />)}</div>
-          )}
+          </div>
 
           <footer className="legend"><span>LEGENDA</span><div><i className="dot group-a" /> Grupo A</div><div><i className="dot group-b" /> Grupo B</div><div><i className="today-outline" /> Hoje</div><div><i className="dot payment" /> Pagamento</div><div><i className="dot national" /> Feriado nacional</div><div><i className="dot state" /> Estadual</div><div><i className="dot municipal" /> Municipal</div><div><i className="dot commemorative" /> Data comemorativa</div>{selectedOfficer && <><div><i className="dot service" /> Serviço</div><div><i className="dot off" /> Folga</div></>}</footer>
         </section>

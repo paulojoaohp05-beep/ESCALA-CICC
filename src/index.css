@@ -267,26 +267,39 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   .schedule-block { grid-template-columns: 92px 1fr 1fr; gap: 6px; }
 }
 
+.print-calendar { display: none; }
+
 @media print {
-  :root, :root[data-theme='light'] { --bg: #fff; --panel: #fff; --card: #fff; --card-2: #f5f5f5; --border: #c9cdd2; --text: #111; --muted: #555; --group-a: #2d6174; --group-a-soft: #fff; --group-b: #584b78; --group-b-soft: #fff; --shadow: none; }
-  @page { margin: 10mm; size: landscape; }
-  body { background: #fff; color: #111; }
-  .topbar, .hero, .stats-grid, .filters, .toolbar-actions, .mobile-month-nav, .legend, .copy-button { display: none !important; }
-  main { max-width: none; padding: 0; }
-  .calendar-panel { border: 0; border-radius: 0; box-shadow: none; overflow: visible; }
-  .calendar-toolbar { display: block; padding: 0 0 10px; }
-  .month-heading { display: block; }
-  .calendar-wrap { border: 1px solid #bbb; }
-  .week-header, .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-  .week-header { display: grid; }
-  .day-card { display: block; min-height: 155px; margin: 0; padding: 7px; border-radius: 0; break-inside: avoid; color: #111; }
-  .day-card.outside { visibility: hidden; }
-  .day-card.dimmed { opacity: .35; }
-  .day-card.is-today { box-shadow: inset 0 0 0 2px #444; }
-  .mobile-weekday, .mobile-month { display: none; }
-  .schedule-block { display: block; padding: 5px 0; }
-  .schedule-block p { flex-direction: row; font-size: 8px; }
-  .schedule-block p b { font-size: 8px; }
-  .list-view { padding: 0; background: #fff; }
-  .list-row { margin: 0; border-radius: 0; break-inside: avoid; }
+  :root, :root[data-theme='light'] { --bg: #fff; --panel: #fff; --card: #fff; --card-2: #fff; --border: #aeb4bb; --text: #111; --muted: #444; --group-a: #276441; --group-a-soft: #fff; --group-b: #8c302d; --group-b-soft: #fff; --shadow: none; }
+  @page { size: A4 landscape; margin: 5mm; }
+  html, body, #root { width: 100%; height: auto; min-width: 0; background: #fff !important; color: #111; }
+  body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .topbar, .hero, .stats-grid, .calendar-toolbar, .filters, .screen-calendar, .legend { display: none !important; }
+  main { width: 100%; max-width: none; margin: 0; padding: 0; }
+  .calendar-panel { border: 0; border-radius: 0; box-shadow: none; overflow: visible; break-inside: avoid; page-break-inside: avoid; }
+  .print-calendar { display: block; width: 100%; break-inside: avoid; page-break-inside: avoid; }
+  .print-calendar h1 { height: 8mm; margin: 0; font: 700 14px/8mm Manrope, sans-serif; color: #111; text-align: center; }
+  .print-calendar .calendar-wrap { height: 186mm; border: .3mm solid #777; overflow: hidden; break-inside: avoid; page-break-inside: avoid; }
+  .print-calendar .week-header { display: grid; height: 6mm; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .print-calendar .week-header div { padding: 0; background: #fff; border-color: #999; color: #222; font-size: 7px; line-height: 6mm; }
+  .print-calendar .calendar-grid { display: grid; height: 180mm; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-template-rows: repeat(6, 30mm); overflow: hidden; }
+  .print-calendar .day-card { display: block; min-width: 0; min-height: 0; height: 30mm; margin: 0; padding: 1.2mm 1.4mm; overflow: hidden; border-radius: 0; border-color: #aaa; background: #fff !important; color: #111; box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
+  .print-calendar .day-card.outside { visibility: visible; opacity: .18; }
+  .print-calendar .day-card.outside > *:not(.day-top) { visibility: hidden; }
+  .print-calendar .day-card.outside .day-top > div { visibility: hidden; }
+  .print-calendar .day-card.is-today { box-shadow: inset 0 0 0 .4mm #444; }
+  .print-calendar .day-top { height: 4mm; margin: 0 0 .5mm; align-items: flex-start; }
+  .print-calendar .day-top > strong { font-size: 10px; line-height: 1; }
+  .print-calendar .day-top > div { gap: 1mm; }
+  .print-calendar .group-badge, .print-calendar .today-label { padding: .4mm 1mm; border: .2mm solid currentColor; background: #fff; font-size: 7px; line-height: 1; }
+  .print-calendar .mobile-weekday, .print-calendar .mobile-month, .print-calendar .copy-button, .print-calendar .duty-state { display: none !important; }
+  .print-calendar .event-badges { max-height: 7mm; margin: 0 0 .5mm; gap: .4mm; overflow: hidden; }
+  .print-calendar .event-item { padding: .3mm .8mm; border-left-width: .5mm; background: #fff; }
+  .print-calendar .event-item span { display: inline; font-size: 6px; line-height: 1; }
+  .print-calendar .event-item b { display: inline; margin: 0 0 0 .8mm; color: #222; font-size: 7px; line-height: 1; white-space: normal; }
+  .print-calendar .schedule-block { display: block; padding: .7mm 0 .4mm; border-color: #bbb; }
+  .print-calendar .schedule-block h3 { margin: 0 0 .3mm; color: #333; font-size: 7px; line-height: 1; letter-spacing: .02em; }
+  .print-calendar .schedule-block p { display: flex; flex-direction: row; align-items: baseline; justify-content: flex-start; gap: 1mm; margin: .2mm 0; font-size: 7px; line-height: 1.15; }
+  .print-calendar .schedule-block p span { flex: 0 0 7mm; color: #555; }
+  .print-calendar .schedule-block p b { width: auto; color: #111; font-size: 7.5px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
