@@ -27,14 +27,14 @@ const MS_PER_DAY = 86_400_000
 const BASE_MONDAY_UTC = Date.UTC(2026, 8, 28)
 
 export function getGroupForDate(date: Date): Group {
-  const weekday = date.getDay()
-  if (weekday === 1 || weekday === 3 || weekday === 5) return 'A'
-  if (weekday === 2 || weekday === 4) return 'B'
-
   const utcDate = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
   const daysSinceBase = Math.floor((utcDate - BASE_MONDAY_UTC) / MS_PER_DAY)
   const weekOffset = Math.floor(daysSinceBase / 7)
-  return ((weekOffset % 2) + 2) % 2 === 0 ? 'A' : 'B'
+  const isBasePattern = ((weekOffset % 2) + 2) % 2 === 0
+  const weekdayFromMonday = (date.getDay() + 6) % 7
+  const isFatDay = weekdayFromMonday !== 1 && weekdayFromMonday !== 3
+
+  return isFatDay === isBasePattern ? 'A' : 'B'
 }
 
 export function groupHasOfficer(group: Group, officer: string) {
