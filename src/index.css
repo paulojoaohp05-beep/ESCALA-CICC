@@ -286,10 +286,19 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   .print-calendar .day-top > div { gap: 1mm; }
   .print-calendar .group-badge, .print-calendar .today-label { padding: .4mm 1mm; border: .2mm solid currentColor; background: #fff; font-size: 7px; line-height: 1; }
   .print-calendar .mobile-weekday, .print-calendar .mobile-month, .print-calendar .duty-state { display: none !important; }
-  .print-calendar .event-badges { max-height: 7mm; margin: 0 0 .4mm; gap: .3mm; overflow: hidden; }
-  .print-calendar .event-item { padding: .2mm .7mm; border-left-width: .5mm; background: #fff; }
-  .print-calendar .event-item span { display: inline; font-size: 6px; line-height: 1; }
-  .print-calendar .event-item b { display: inline; margin: 0 0 0 .7mm; color: #222; font-size: 7px; line-height: 1.05; white-space: normal; }
+  .print-calendar .event-badges { display: block; max-height: 4mm; margin: 0 0 .25mm; overflow: hidden; }
+  .print-calendar .event-badges:empty { display: none; margin: 0; }
+  .print-calendar .event-item { display: flex; align-items: baseline; gap: .6mm; min-width: 0; margin: 0; padding: 0; overflow: hidden; border: 0; border-radius: 0; background: transparent; color: #333; line-height: 1.05; }
+  .print-calendar .event-item span { flex: none; font-size: 0; font-weight: 700; line-height: 1.05; }
+  .print-calendar .event-item span::before { font-size: 6px; }
+  .print-calendar .event-item span::after { content: '·'; margin-left: .6mm; font-size: 6px; }
+  .print-calendar .event-item.payment span::before { content: 'PAGAMENTO'; }
+  .print-calendar .event-item.holiday-national span::before { content: 'NACIONAL'; }
+  .print-calendar .event-item.holiday-state span::before { content: 'ESTADUAL'; }
+  .print-calendar .event-item.holiday-municipal span::before { content: 'MUNICIPAL'; }
+  .print-calendar .event-item.commemorative span::before { content: 'COMEM.'; }
+  .print-calendar .event-item.optional span::before { content: 'P. FACULTATIVO'; }
+  .print-calendar .event-item b { display: block; min-width: 0; margin: 0; overflow: hidden; color: #222; font-size: 6.5px; line-height: 1.05; text-overflow: ellipsis; white-space: nowrap; }
   .print-calendar .schedule-block { display: block; padding: .55mm 0 .3mm; border-color: #bbb; }
   .print-calendar .schedule-block h3 { margin: 0 0 .2mm; color: #333; font-size: 7px; line-height: 1; letter-spacing: .02em; }
   .print-calendar .schedule-block p { display: flex; flex-direction: row; align-items: baseline; justify-content: flex-start; gap: .8mm; margin: .1mm 0; font-size: 7px; line-height: 1.1; }
