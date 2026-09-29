@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CalendarDays, Check, ChevronLeft, ChevronRight, Clipboard, Grid2X2, List, Moon, Printer, Sun, Users } from 'lucide-react'
 import { getCommemorativeDate } from './commemorativeDates'
+import { getCopomSchedule, type CopomSchedule } from './copomSchedule'
 import { getHoliday, getOptionalDate, type HolidayCategory } from './holidays'
 import { getFifthBusinessDay } from './payment'
 import { getCalendarDays, getGroupForDate, getTeamForDate, groupHasOfficer, OFFICERS, type Group } from './schedule'
@@ -63,6 +64,7 @@ function App() {
   const copyDay = async (day: Date) => {
     const group = getGroupForDate(day)
     const team = getTeamForDate(day)
+    const copom = getCopomSchedule(day)
     const dayEvents = getDayEvents(day)
     const extras = [
       dayEvents.payment ? 'Pagamento: 5º dia útil' : null,
@@ -70,7 +72,7 @@ function App() {
       dayEvents.optional ? `Ponto facultativo: ${dayEvents.optional.name}` : null,
       dayEvents.commemorative ? `Data comemorativa: ${dayEvents.commemorative.name}` : null,
     ].filter(Boolean)
-    const text = `${formatFullDate(day)} — Grupo ${group}\n\nCoordenação\nDia: ${team.coordination.day}\nNoite: ${team.coordination.night}\n\nCabine Muralha\nDia: ${team.cabin.day}\nNoite: ${team.cabin.night}${extras.length ? `\n\n${extras.join('\n')}` : ''}`
+    const text = `${formatFullDate(day)} — Grupo ${group}\n\nCICC — Coordenação\nDia: ${team.coordination.day} — COPOM ${copom.day}\nNoite: ${team.coordination.night} — COPOM ${copom.night}\n\nCabine Muralha\nDia: ${team.cabin.day} — COPOM ${copom.day}\nNoite: ${team.cabin.night} — COPOM ${copom.night}${extras.length ? `\n\n${extras.join('\n')}` : ''}`
     await navigator.clipboard.writeText(text)
     const key = day.toISOString()
     setCopied(key)
@@ -160,26 +162,28 @@ function EventBadges({ day, visibility }: { day: Date; visibility: EventVisibili
 function DayCard({ day, currentMonth, today, dimmed, selectedOfficer, copied, events, onCopy }: DayProps & { currentMonth: boolean; today: boolean }) {
   const group = getGroupForDate(day)
   const team = getTeamForDate(day)
+  const copom = getCopomSchedule(day)
   const working = selectedOfficer ? groupHasOfficer(group, selectedOfficer) : false
   return <article className={`day-card group-${group.toLowerCase()} ${!currentMonth ? 'outside' : ''} ${today ? 'is-today' : ''} ${dimmed ? 'dimmed' : ''} ${selectedOfficer && !working ? 'day-off' : ''}`}>
     <div className="day-top"><strong><span className="mobile-weekday">{WEEKDAYS[day.getDay()]} • </span>{day.getDate()}<span className="mobile-month"> {SHORT_MONTHS[day.getMonth()]}</span></strong><div>{today && <span className="today-label">HOJE</span>}<span className="group-badge">GRUPO {group}</span></div></div>
     <EventBadges day={day} visibility={events} />
     {selectedOfficer && <div className={`duty-state ${working ? 'working' : ''}`}>{working ? 'Em serviço' : 'Folga'}</div>}
-    <ScheduleBlock title="CICC — Coordenação" day={team.coordination.day} night={team.coordination.night} />
-    <ScheduleBlock title="Cabine Muralha" day={team.cabin.day} night={team.cabin.night} />
+    <ScheduleBlock title="CICC — Coordenação" day={team.coordination.day} night={team.coordination.night} copom={copom} />
+    <ScheduleBlock title="Cabine Muralha" day={team.cabin.day} night={team.cabin.night} copom={copom} />
     <button className="copy-button" onClick={onCopy} title="Copiar escala do dia">{copied ? <Check size={14} /> : <Clipboard size={14} />}{copied ? 'Copiado' : 'Copiar'}</button>
   </article>
 }
 
-function ScheduleBlock({ title, day, night }: { title: string; day: string; night: string }) {
-  return <div className="schedule-block"><h3>{title}</h3><p><span>Dia</span><b>{day}</b></p><p><span>Noite</span><b>{night}</b></p></div>
+function ScheduleBlock({ title, day, night, copom }: { title: string; day: string; night: string; copom: CopomSchedule }) {
+  return <div className="schedule-block"><h3>{title}</h3><p><span>Dia</span><b>{day}</b><em className="copom-team">COPOM {copom.day}</em></p><p><span>Noite</span><b>{night}</b><em className="copom-team">COPOM {copom.night}</em></p></div>
 }
 
 function DayListRow({ day, today, dimmed, selectedOfficer, copied, events, onCopy }: DayProps & { today: boolean }) {
   const group = getGroupForDate(day)
   const team = getTeamForDate(day)
+  const copom = getCopomSchedule(day)
   const working = selectedOfficer ? groupHasOfficer(group, selectedOfficer) : false
-  return <article className={`list-row group-${group.toLowerCase()} ${today ? 'is-today' : ''} ${dimmed ? 'dimmed' : ''}`}><div className="list-date"><strong>{WEEKDAYS[day.getDay()]} <i>•</i> {String(day.getDate()).padStart(2, '0')} {SHORT_MONTHS[day.getMonth()]}</strong>{today && <span className="today-label">HOJE</span>}</div><div className="list-status"><span className="group-badge">GRUPO {group}</span>{selectedOfficer && <span className={`duty-state ${working ? 'working' : ''}`}>{working ? 'Em serviço' : 'Folga'}</span>}</div><EventBadges day={day} visibility={events} /><ScheduleBlock title="CICC — Coordenação" day={team.coordination.day} night={team.coordination.night} /><ScheduleBlock title="Cabine Muralha" day={team.cabin.day} night={team.cabin.night} /><button className="copy-button" onClick={onCopy}>{copied ? <Check size={15} /> : <Clipboard size={15} />}<span>{copied ? 'Copiado' : 'Copiar'}</span></button></article>
+  return <article className={`list-row group-${group.toLowerCase()} ${today ? 'is-today' : ''} ${dimmed ? 'dimmed' : ''}`}><div className="list-date"><strong>{WEEKDAYS[day.getDay()]} <i>•</i> {String(day.getDate()).padStart(2, '0')} {SHORT_MONTHS[day.getMonth()]}</strong>{today && <span className="today-label">HOJE</span>}</div><div className="list-status"><span className="group-badge">GRUPO {group}</span>{selectedOfficer && <span className={`duty-state ${working ? 'working' : ''}`}>{working ? 'Em serviço' : 'Folga'}</span>}</div><EventBadges day={day} visibility={events} /><ScheduleBlock title="CICC — Coordenação" day={team.coordination.day} night={team.coordination.night} copom={copom} /><ScheduleBlock title="Cabine Muralha" day={team.cabin.day} night={team.cabin.night} copom={copom} /><button className="copy-button" onClick={onCopy}>{copied ? <Check size={15} /> : <Clipboard size={15} />}<span>{copied ? 'Copiado' : 'Copiar'}</span></button></article>
 }
 
 export default App
