@@ -92,7 +92,6 @@ function App() {
       <main>
         <section className="hero">
           <div><p className="eyebrow"><CalendarDays size={14} /> PLANEJAMENTO MENSAL</p><h1>Escala de serviço</h1><p>Coordenação CICC e Cabine Muralha</p></div>
-          <div className="status-pill"><span /> Escala atualizada</div>
         </section>
 
         <section className="stats-grid">
