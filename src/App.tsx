@@ -73,10 +73,6 @@ function App() {
       </header>
 
       <main>
-        <section className="hero">
-          <div><p className="eyebrow"><CalendarDays size={14} /> PLANEJAMENTO MENSAL</p><h1>Escala de serviço</h1><p>Coordenação CICC e Cabine Muralha</p></div>
-        </section>
-
         <section className="stats-grid">
           <article className="stat-card stat-a"><div className="stat-icon"><Users size={20} /></div><div><span>PLANTÕES GRUPO A</span><strong>{groupCounts.A}</strong><small>dias em {MONTHS[cursor.getMonth()].toLowerCase()}</small></div></article>
           <article className="stat-card stat-b"><div className="stat-icon"><Users size={20} /></div><div><span>PLANTÕES GRUPO B</span><strong>{groupCounts.B}</strong><small>dias em {MONTHS[cursor.getMonth()].toLowerCase()}</small></div></article>

@@ -59,10 +59,6 @@ button:hover { border-color: var(--border-strong); }
 @media (hover: hover) { button:hover { transform: translateY(-1px); } }
 
 main { width: 100%; max-width: 1500px; padding: 38px 24px 60px; margin: auto; }
-.hero { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 26px; }
-.eyebrow { color: var(--group-a) !important; font-size: 11px !important; font-weight: 700; letter-spacing: .12em; display: flex; align-items: center; gap: 7px; }
-.hero h1 { font: 700 32px/1.2 Manrope, sans-serif; margin: 9px 0 6px; letter-spacing: -.035em; }
-.hero p { margin: 0; color: var(--muted); font-size: 14px; }
 
 .stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
 .stat-card { min-width: 0; min-height: 96px; border: 1px solid var(--border); background: var(--panel); border-radius: 13px; padding: 17px 19px; display: flex; align-items: center; gap: 14px; position: relative; overflow: hidden; box-shadow: var(--shadow); }
@@ -187,10 +183,6 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   .icon-button, .print-button { width: 36px; padding: 0; }
   .print-button span { display: none; }
   main { padding: 22px 8px 36px; }
-  .hero { margin: 0 4px 20px; align-items: flex-start; }
-  .hero h1 { font-size: 26px; margin-top: 7px; }
-  .hero p { font-size: 13px; }
-  .eyebrow { font-size: 10px !important; }
   .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
   .stat-card { min-height: 82px; padding: 12px; gap: 10px; border-radius: 11px; box-shadow: none; }
   .stat-card:last-child { grid-column: 1 / -1; }
@@ -257,7 +249,6 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
 
 @media (max-width: 390px) {
   main { padding-left: 6px; padding-right: 6px; }
-  .hero { margin-left: 3px; margin-right: 3px; }
   .stats-grid { gap: 6px; }
   .stat-card { padding: 10px; }
   .stat-icon { display: none; }
@@ -276,7 +267,7 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   @page { size: A4 landscape; margin: 5mm; }
   html, body, #root { width: 100%; height: auto; min-width: 0; background: #fff !important; color: #111; }
   body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-  .topbar, .hero, .stats-grid, .calendar-toolbar, .filters, .screen-calendar, .legend { display: none !important; }
+  .topbar, .stats-grid, .calendar-toolbar, .filters, .screen-calendar, .legend { display: none !important; }
   main { width: 100%; max-width: none; margin: 0; padding: 0; }
   .calendar-panel { border: 0; border-radius: 0; box-shadow: none; overflow: visible; break-inside: avoid; page-break-inside: avoid; }
   .print-calendar { display: block; width: 100%; break-inside: avoid; page-break-inside: avoid; }
