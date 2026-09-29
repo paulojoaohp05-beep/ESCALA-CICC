@@ -1,23 +1,37 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CalendarDays, Check, ChevronLeft, ChevronRight, Clipboard, Grid2X2, List, Moon, Printer, Sun, Users } from 'lucide-react'
+import { getCommemorativeDate } from './commemorativeDates'
+import { getHoliday, getOptionalDate, type HolidayCategory } from './holidays'
+import { getFifthBusinessDay } from './payment'
 import { getCalendarDays, getGroupForDate, groupHasOfficer, OFFICERS, TEAMS, type Group } from './schedule'
 
 type Filter = 'all' | 'A' | 'B' | string
 type Theme = 'light' | 'dark'
 type View = 'grid' | 'list'
+type EventVisibility = { payment: boolean; holidays: boolean; commemorative: boolean }
 
 const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 const SHORT_MONTHS = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
 const WEEKDAYS = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
+const CATEGORY_LABELS: Record<HolidayCategory, string> = { national: 'Feriado nacional', state: 'Feriado estadual', municipal: 'Feriado municipal' }
 
 const sameDay = (a: Date, b: Date) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate()
-const formatFullDate = (date: Date) => new Intl.DateTimeFormat('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' }).format(date)
+const formatFullDate = (date: Date) => new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date)
 const getInitialTheme = (): Theme => {
   const saved = localStorage.getItem('escala-cicc-theme')
   if (saved === 'light' || saved === 'dark') return saved
   return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
 }
 const getInitialView = (): View => window.matchMedia('(max-width: 767px)').matches ? 'list' : 'grid'
+
+function getDayEvents(day: Date) {
+  return {
+    holiday: getHoliday(day),
+    optional: getOptionalDate(day),
+    commemorative: getCommemorativeDate(day),
+    payment: sameDay(day, getFifthBusinessDay(day.getFullYear(), day.getMonth())),
+  }
+}
 
 function App() {
   const today = new Date()
@@ -26,6 +40,7 @@ function App() {
   const [view, setView] = useState<View>(getInitialView)
   const [theme, setTheme] = useState<Theme>(getInitialTheme)
   const [copied, setCopied] = useState<string | null>(null)
+  const [events, setEvents] = useState<EventVisibility>({ payment: true, holidays: true, commemorative: true })
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -37,17 +52,25 @@ function App() {
   const groupCounts = { A: monthDays.filter((day) => getGroupForDate(day) === 'A').length, B: monthDays.filter((day) => getGroupForDate(day) === 'B').length }
   const selectedOfficer = OFFICERS.includes(filter) ? filter : null
   const officerWorkDays = selectedOfficer ? monthDays.filter((day) => groupHasOfficer(getGroupForDate(day), selectedOfficer)).length : 0
-  const years = Array.from({ length: 31 }, (_, index) => today.getFullYear() - 10 + index)
+  const years = Array.from({ length: 501 }, (_, index) => 1900 + index)
 
   const moveMonth = (amount: number) => setCursor((date) => new Date(date.getFullYear(), date.getMonth() + amount, 1))
   const goToday = () => setCursor(new Date(today.getFullYear(), today.getMonth(), 1))
   const setMonth = (month: number) => setCursor((date) => new Date(date.getFullYear(), month, 1))
   const setYear = (year: number) => setCursor((date) => new Date(year, date.getMonth(), 1))
+  const toggleEvent = (key: keyof EventVisibility) => setEvents((current) => ({ ...current, [key]: !current[key] }))
 
   const copyDay = async (day: Date) => {
     const group = getGroupForDate(day)
     const team = TEAMS[group]
-    const text = `${formatFullDate(day)} — Grupo ${group}\nCoordenação: Dia ${team.coordination.day} | Noite ${team.coordination.night}\nCabine Muralha: Dia ${team.cabin.day} | Noite ${team.cabin.night}`
+    const dayEvents = getDayEvents(day)
+    const extras = [
+      dayEvents.payment ? 'Pagamento: 5º dia útil' : null,
+      dayEvents.holiday ? `Feriado: ${dayEvents.holiday.name} (${CATEGORY_LABELS[dayEvents.holiday.category]})` : null,
+      dayEvents.optional ? `Ponto facultativo: ${dayEvents.optional.name}` : null,
+      dayEvents.commemorative ? `Data comemorativa: ${dayEvents.commemorative.name}` : null,
+    ].filter(Boolean)
+    const text = `${formatFullDate(day)} — Grupo ${group}\n\nCoordenação\nDia: ${team.coordination.day}\nNoite: ${team.coordination.night}\n\nCabine Muralha\nDia: ${team.cabin.day}\nNoite: ${team.cabin.night}${extras.length ? `\n\n${extras.join('\n')}` : ''}`
     await navigator.clipboard.writeText(text)
     const key = day.toISOString()
     setCopied(key)
@@ -59,16 +82,16 @@ function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <div className="brand">Escala CICC</div>
+        <div className="brand">ESCALA CICC</div>
         <div className="top-actions">
           <button className="icon-button" onClick={() => setTheme((value) => value === 'light' ? 'dark' : 'light')} aria-label={`Ativar modo ${theme === 'light' ? 'escuro' : 'claro'}`} title={`Ativar modo ${theme === 'light' ? 'escuro' : 'claro'}`}>{theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}</button>
-          <button className="print-button" onClick={() => window.print()}><Printer size={17} /><span>Imprimir</span></button>
+          <button className="print-button" onClick={() => window.print()}><Printer size={17} /><span>Imprimir escala</span></button>
         </div>
       </header>
 
       <main>
         <section className="hero">
-          <div><p className="eyebrow"><CalendarDays size={14} /> PLANEJAMENTO MENSAL</p><h1>Escala de serviço</h1><p>Coordenação e Cabine Muralha</p></div>
+          <div><p className="eyebrow"><CalendarDays size={14} /> PLANEJAMENTO MENSAL</p><h1>Escala de serviço</h1><p>Coordenação CICC e Cabine Muralha</p></div>
           <div className="status-pill"><span /> Escala atualizada</div>
         </section>
 
@@ -97,33 +120,45 @@ function App() {
               {[['all', 'Todos'], ['A', 'Grupo A'], ['B', 'Grupo B'], ...OFFICERS.map((officer) => [officer, officer])].map(([value, label]) => <button key={value} className={`${filter === value ? 'selected' : ''} filter-${value}`} onClick={() => setFilter(value)}>{label}</button>)}
             </div>
           </div>
+          <div className="event-controls"><span>EXIBIR</span><label><input type="checkbox" checked={events.payment} onChange={() => toggleEvent('payment')} /> Pagamento</label><label><input type="checkbox" checked={events.holidays} onChange={() => toggleEvent('holidays')} /> Feriados</label><label><input type="checkbox" checked={events.commemorative} onChange={() => toggleEvent('commemorative')} /> Datas comemorativas</label></div>
 
           {view === 'grid' ? (
             <div className="calendar-wrap">
               <div className="week-header">{WEEKDAYS.map((day) => <div key={day}>{day}</div>)}</div>
-              <div className="calendar-grid">{days.map((day) => <DayCard key={day.toISOString()} day={day} currentMonth={day.getMonth() === cursor.getMonth()} today={sameDay(day, today)} dimmed={!isEmphasized(getGroupForDate(day))} selectedOfficer={selectedOfficer} copied={copied === day.toISOString()} onCopy={() => copyDay(day)} />)}</div>
+              <div className="calendar-grid">{days.map((day) => <DayCard key={day.toISOString()} day={day} currentMonth={day.getMonth() === cursor.getMonth()} today={sameDay(day, today)} dimmed={!isEmphasized(getGroupForDate(day))} selectedOfficer={selectedOfficer} copied={copied === day.toISOString()} events={events} onCopy={() => copyDay(day)} />)}</div>
             </div>
           ) : (
-            <div className="list-view">{monthDays.map((day) => <DayListRow key={day.toISOString()} day={day} today={sameDay(day, today)} dimmed={!isEmphasized(getGroupForDate(day))} selectedOfficer={selectedOfficer} copied={copied === day.toISOString()} onCopy={() => copyDay(day)} />)}</div>
+            <div className="list-view">{monthDays.map((day) => <DayListRow key={day.toISOString()} day={day} today={sameDay(day, today)} dimmed={!isEmphasized(getGroupForDate(day))} selectedOfficer={selectedOfficer} copied={copied === day.toISOString()} events={events} onCopy={() => copyDay(day)} />)}</div>
           )}
 
-          <footer className="legend"><span>LEGENDA</span><div><i className="dot group-a" /> Grupo A</div><div><i className="dot group-b" /> Grupo B</div><div><i className="today-outline" /> Dia atual</div>{selectedOfficer && <><div><i className="dot service" /> Serviço</div><div><i className="dot off" /> Folga</div></>}</footer>
+          <footer className="legend"><span>LEGENDA</span><div><i className="dot group-a" /> Grupo A</div><div><i className="dot group-b" /> Grupo B</div><div><i className="today-outline" /> Hoje</div><div><i className="dot payment" /> Pagamento</div><div><i className="dot national" /> Feriado nacional</div><div><i className="dot state" /> Estadual</div><div><i className="dot municipal" /> Municipal</div><div><i className="dot commemorative" /> Data comemorativa</div>{selectedOfficer && <><div><i className="dot service" /> Serviço</div><div><i className="dot off" /> Folga</div></>}</footer>
         </section>
       </main>
     </div>
   )
 }
 
-type DayProps = { day: Date; dimmed: boolean; selectedOfficer: string | null; copied: boolean; onCopy: () => void }
+type DayProps = { day: Date; dimmed: boolean; selectedOfficer: string | null; copied: boolean; events: EventVisibility; onCopy: () => void }
 
-function DayCard({ day, currentMonth, today, dimmed, selectedOfficer, copied, onCopy }: DayProps & { currentMonth: boolean; today: boolean }) {
+function EventBadges({ day, visibility }: { day: Date; visibility: EventVisibility }) {
+  const dayEvents = getDayEvents(day)
+  return <div className="event-badges">
+    {visibility.payment && dayEvents.payment && <div className="event-item payment"><span>Pagamento</span><b>5º dia útil</b></div>}
+    {visibility.holidays && dayEvents.holiday && <div className={`event-item holiday-${dayEvents.holiday.category}`}><span>{CATEGORY_LABELS[dayEvents.holiday.category]}</span><b>{dayEvents.holiday.name}</b></div>}
+    {visibility.holidays && dayEvents.optional && <div className="event-item optional"><span>Ponto facultativo</span><b>{dayEvents.optional.name}</b></div>}
+    {visibility.commemorative && dayEvents.commemorative && <div className="event-item commemorative"><span>Data comemorativa</span><b>{dayEvents.commemorative.name}</b></div>}
+  </div>
+}
+
+function DayCard({ day, currentMonth, today, dimmed, selectedOfficer, copied, events, onCopy }: DayProps & { currentMonth: boolean; today: boolean }) {
   const group = getGroupForDate(day)
   const team = TEAMS[group]
   const working = selectedOfficer ? groupHasOfficer(group, selectedOfficer) : false
   return <article className={`day-card group-${group.toLowerCase()} ${!currentMonth ? 'outside' : ''} ${today ? 'is-today' : ''} ${dimmed ? 'dimmed' : ''} ${selectedOfficer && !working ? 'day-off' : ''}`}>
     <div className="day-top"><strong><span className="mobile-weekday">{WEEKDAYS[day.getDay()]} • </span>{day.getDate()}<span className="mobile-month"> {SHORT_MONTHS[day.getMonth()]}</span></strong><div>{today && <span className="today-label">HOJE</span>}<span className="group-badge">GRUPO {group}</span></div></div>
+    <EventBadges day={day} visibility={events} />
     {selectedOfficer && <div className={`duty-state ${working ? 'working' : ''}`}>{working ? 'Em serviço' : 'Folga'}</div>}
-    <ScheduleBlock title="Coordenação" day={team.coordination.day} night={team.coordination.night} />
+    <ScheduleBlock title="CICC — Coordenação" day={team.coordination.day} night={team.coordination.night} />
     <ScheduleBlock title="Cabine Muralha" day={team.cabin.day} night={team.cabin.night} />
     <button className="copy-button" onClick={onCopy} title="Copiar escala do dia">{copied ? <Check size={14} /> : <Clipboard size={14} />}{copied ? 'Copiado' : 'Copiar'}</button>
   </article>
@@ -133,11 +168,11 @@ function ScheduleBlock({ title, day, night }: { title: string; day: string; nigh
   return <div className="schedule-block"><h3>{title}</h3><p><span>Dia</span><b>{day}</b></p><p><span>Noite</span><b>{night}</b></p></div>
 }
 
-function DayListRow({ day, today, dimmed, selectedOfficer, copied, onCopy }: DayProps & { today: boolean }) {
+function DayListRow({ day, today, dimmed, selectedOfficer, copied, events, onCopy }: DayProps & { today: boolean }) {
   const group = getGroupForDate(day)
   const team = TEAMS[group]
   const working = selectedOfficer ? groupHasOfficer(group, selectedOfficer) : false
-  return <article className={`list-row group-${group.toLowerCase()} ${today ? 'is-today' : ''} ${dimmed ? 'dimmed' : ''}`}><div className="list-date"><strong>{WEEKDAYS[day.getDay()]} <i>•</i> {String(day.getDate()).padStart(2, '0')} {SHORT_MONTHS[day.getMonth()]}</strong>{today && <span className="today-label">HOJE</span>}</div><span className="group-badge">GRUPO {group}</span>{selectedOfficer && <span className={`duty-state ${working ? 'working' : ''}`}>{working ? 'Em serviço' : 'Folga'}</span>}<ScheduleBlock title="Coordenação" day={team.coordination.day} night={team.coordination.night} /><ScheduleBlock title="Cabine Muralha" day={team.cabin.day} night={team.cabin.night} /><button className="copy-button" onClick={onCopy}>{copied ? <Check size={15} /> : <Clipboard size={15} />}<span>{copied ? 'Copiado' : 'Copiar'}</span></button></article>
+  return <article className={`list-row group-${group.toLowerCase()} ${today ? 'is-today' : ''} ${dimmed ? 'dimmed' : ''}`}><div className="list-date"><strong>{WEEKDAYS[day.getDay()]} <i>•</i> {String(day.getDate()).padStart(2, '0')} {SHORT_MONTHS[day.getMonth()]}</strong>{today && <span className="today-label">HOJE</span>}</div><div className="list-status"><span className="group-badge">GRUPO {group}</span>{selectedOfficer && <span className={`duty-state ${working ? 'working' : ''}`}>{working ? 'Em serviço' : 'Folga'}</span>}</div><EventBadges day={day} visibility={events} /><ScheduleBlock title="CICC — Coordenação" day={team.coordination.day} night={team.coordination.night} /><ScheduleBlock title="Cabine Muralha" day={team.cabin.day} night={team.cabin.night} /><button className="copy-button" onClick={onCopy}>{copied ? <Check size={15} /> : <Clipboard size={15} />}<span>{copied ? 'Copiado' : 'Copiar'}</span></button></article>
 }
 
 export default App

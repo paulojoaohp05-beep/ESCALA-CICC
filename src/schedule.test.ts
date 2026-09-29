@@ -14,6 +14,11 @@ test('inverte completamente os grupos na semana seguinte', () => {
   expected.forEach((group, index) => assert.equal(groupOn(2026, 10, 5 + index), group))
 })
 
+test('a terceira semana volta ao padrão do Grupo A gordo', () => {
+  const expected: Group[] = ['A', 'B', 'A', 'B', 'A', 'A', 'A']
+  expected.forEach((group, index) => assert.equal(groupOn(2026, 10, 12 + index), group))
+})
+
 test('alterna corretamente também nas semanas anteriores à base', () => {
   const expected: Group[] = ['B', 'A', 'B', 'A', 'B', 'B', 'B']
   expected.forEach((group, index) => assert.equal(groupOn(2026, 9, 21 + index), group))

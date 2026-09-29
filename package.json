@@ -1,5 +1,5 @@
 {
-  "name": "escala-copom-sp",
+  "name": "escala-cicc",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "test": "node --test src/schedule.test.ts",
+    "test": "node --test src/*.test.ts",
     "preview": "vite preview"
   },
   "dependencies": {
