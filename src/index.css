@@ -139,9 +139,9 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
 .schedule-block p span { color: var(--muted); }
 .schedule-block p b { min-width: 0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .copom-team { flex: none; color: var(--muted); font-size: 7px; font-style: normal; font-weight: 700; letter-spacing: .04em; white-space: nowrap; }
-.copy-button { border: 0; background: transparent; color: var(--muted); font-size: 10px; display: flex; align-items: center; gap: 5px; cursor: pointer; padding: 4px 0; opacity: 0; transition: color .18s, opacity .18s; }
-.day-card:hover .copy-button, .list-row .copy-button { opacity: 1; }
-.copy-button:hover { color: var(--text); transform: none; }
+.public-policies { border-top: 1px solid var(--border); padding: 7px 0 3px; }
+.public-policies h3 { margin: 0 0 3px; color: var(--muted); font-size: 8px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.public-policies b { font-size: 9px; font-weight: 600; }
 .duty-state { width: fit-content; font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: 5px; color: var(--muted); background: color-mix(in srgb, var(--muted) 12%, transparent); margin: -4px 0 7px; }
 .duty-state.working { color: var(--success); background: color-mix(in srgb, var(--success) 12%, transparent); }
 
@@ -159,13 +159,14 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
 .today-outline { width: 10px; height: 10px; border: 1px solid var(--group-a); border-radius: 2px; }
 
 .list-view { border-top: 1px solid var(--border); }
-.list-row { min-height: 92px; padding: 12px 18px; display: grid; grid-template-columns: 105px 90px minmax(145px, .8fr) minmax(170px, 1fr) minmax(170px, 1fr) 70px; align-items: center; gap: 14px; border-bottom: 1px solid var(--border); position: relative; transition: background .18s, opacity .18s; }
+.list-row { min-height: 92px; padding: 12px 18px; display: grid; grid-template-columns: 105px 90px minmax(135px, .7fr) minmax(160px, 1fr) minmax(160px, 1fr) minmax(110px, .6fr); align-items: center; gap: 14px; border-bottom: 1px solid var(--border); position: relative; transition: background .18s, opacity .18s; }
 .list-row:hover { background: var(--card-2); }
 .list-date { display: flex; align-items: center; gap: 7px; }
 .list-date strong { font: 700 13px Manrope, sans-serif; white-space: nowrap; }
 .list-date strong i { color: var(--muted); font-style: normal; }
 .list-row .schedule-block { border: 0; padding: 0 0 0 18px; border-left: 1px solid var(--border); }
 .list-row .event-badges { margin: 0; }
+.list-row .public-policies { padding: 0 0 0 18px; border-top: 0; border-left: 1px solid var(--border); }
 .list-status { display: grid; justify-items: start; gap: 6px; }
 .list-row .duty-state { margin: 0; }
 
@@ -175,7 +176,7 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   .schedule-block p b { width: 100%; }
   .calendar-toolbar { align-items: flex-start; }
   .toolbar-actions { flex-wrap: wrap; justify-content: flex-end; }
-  .list-row { grid-template-columns: 90px 82px minmax(120px, .8fr) 1fr 1fr 58px; gap: 8px; }
+  .list-row { grid-template-columns: 85px 76px minmax(105px, .7fr) 1fr 1fr minmax(95px, .6fr); gap: 8px; }
 }
 
 @media (max-width: 767px) {
@@ -235,7 +236,6 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   .schedule-block p span { font-size: 11px; }
   .schedule-block p b { width: 100%; font-size: 14px; overflow: visible; white-space: normal; line-height: 1.25; }
   .copom-team { margin-top: 2px; font-size: 9px; }
-  .copy-button { opacity: 1; min-height: 32px; padding: 6px 2px 2px; font-size: 12px; }
   .duty-state { margin: -3px 0 6px; font-size: 10px; }
   .list-view { padding: 8px; background: var(--bg); }
   .list-row { min-height: 0; margin-bottom: 8px; padding: 13px 14px 11px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 8px; border: 1px solid var(--border); border-radius: 10px; background: var(--panel); }
@@ -246,7 +246,10 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   .list-status { justify-self: end; justify-items: end; }
   .list-row > .event-badges { grid-column: 1 / -1; width: 100%; }
   .list-row .schedule-block { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--border); padding: 9px 0 0; }
-  .list-row .copy-button { grid-column: 1 / -1; justify-self: start; }
+  .public-policies, .list-row .public-policies { padding: 8px 0 2px; border-top: 1px solid var(--border); border-left: 0; }
+  .public-policies h3 { font-size: 10px; }
+  .public-policies b { font-size: 14px; }
+  .list-row .public-policies { grid-column: 1 / -1; }
   .legend { min-height: 46px; padding: 0 10px; gap: 15px; overflow-x: auto; scrollbar-width: none; }
   .legend::-webkit-scrollbar { display: none; }
   .legend div { font-size: 11px; }
@@ -291,7 +294,7 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   .print-calendar .day-top > strong { font-size: 10px; line-height: 1; }
   .print-calendar .day-top > div { gap: 1mm; }
   .print-calendar .group-badge, .print-calendar .today-label { padding: .4mm 1mm; border: .2mm solid currentColor; background: #fff; font-size: 7px; line-height: 1; }
-  .print-calendar .mobile-weekday, .print-calendar .mobile-month, .print-calendar .copy-button, .print-calendar .duty-state { display: none !important; }
+  .print-calendar .mobile-weekday, .print-calendar .mobile-month, .print-calendar .duty-state { display: none !important; }
   .print-calendar .event-badges { max-height: 7mm; margin: 0 0 .5mm; gap: .4mm; overflow: hidden; }
   .print-calendar .event-item { padding: .3mm .8mm; border-left-width: .5mm; background: #fff; }
   .print-calendar .event-item span { display: inline; font-size: 6px; line-height: 1; }
@@ -304,4 +307,8 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   .print-calendar .copom-team { margin: 0; color: #444; font-size: 6.5px; line-height: 1; }
   .print-calendar .copom-team::before { content: '('; }
   .print-calendar .copom-team::after { content: ')'; }
+  .print-calendar .public-policies { display: flex; align-items: baseline; gap: 1mm; padding: .5mm 0 0; border-color: #bbb; }
+  .print-calendar .public-policies h3 { margin: 0; color: #333; font-size: 6.5px; line-height: 1; }
+  .print-calendar .public-policies h3::after { content: ':'; }
+  .print-calendar .public-policies b { font-size: 7.5px; line-height: 1; }
 }
