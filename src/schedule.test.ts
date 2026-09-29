@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { getGroupForDate, type Group } from './schedule.ts'
+import { getGroupForDate, getTeamForDate, type Group } from './schedule.ts'
 
 const groupOn = (year: number, month: number, day: number) => getGroupForDate(new Date(year, month - 1, day))
 
@@ -22,6 +22,12 @@ test('a terceira semana volta ao padrão do Grupo A gordo', () => {
 test('alterna corretamente também nas semanas anteriores à base', () => {
   const expected: Group[] = ['B', 'A', 'B', 'A', 'B', 'B', 'B']
   expected.forEach((group, index) => assert.equal(groupOn(2026, 9, 21 + index), group))
+})
+
+test('substitui Bessane por Ana Romano a partir de 05/10/2026', () => {
+  assert.equal(getTeamForDate(new Date(2026, 9, 1)).coordination.day, 'Bessane')
+  assert.equal(getTeamForDate(new Date(2026, 9, 5)).coordination.day, 'Ana Romano')
+  assert.equal(getTeamForDate(new Date(2028, 0, 1)).coordination.day, getGroupForDate(new Date(2028, 0, 1)) === 'B' ? 'Ana Romano' : 'Deyse')
 })
 
 test('corresponde à validação completa de setembro de 2026', () => {

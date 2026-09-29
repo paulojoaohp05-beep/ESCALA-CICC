@@ -25,6 +25,7 @@ export const OFFICERS = Object.values(TEAMS).flatMap((team) => [
 
 const MS_PER_DAY = 86_400_000
 const BASE_MONDAY_UTC = Date.UTC(2026, 8, 28)
+const ANA_ROMANO_START_UTC = Date.UTC(2026, 9, 5)
 
 export function getGroupForDate(date: Date): Group {
   const utcDate = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
@@ -35,6 +36,15 @@ export function getGroupForDate(date: Date): Group {
   const isFatDay = weekdayFromMonday !== 1 && weekdayFromMonday !== 3
 
   return isFatDay === isBasePattern ? 'A' : 'B'
+}
+
+export function getTeamForDate(date: Date): Team {
+  const group = getGroupForDate(date)
+  const team = TEAMS[group]
+  const utcDate = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+
+  if (group !== 'B' || utcDate < ANA_ROMANO_START_UTC) return team
+  return { ...team, coordination: { ...team.coordination, day: 'Ana Romano' } }
 }
 
 export function groupHasOfficer(group: Group, officer: string) {

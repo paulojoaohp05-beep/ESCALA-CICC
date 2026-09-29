@@ -3,7 +3,7 @@ import { CalendarDays, Check, ChevronLeft, ChevronRight, Clipboard, Grid2X2, Lis
 import { getCommemorativeDate } from './commemorativeDates'
 import { getHoliday, getOptionalDate, type HolidayCategory } from './holidays'
 import { getFifthBusinessDay } from './payment'
-import { getCalendarDays, getGroupForDate, groupHasOfficer, OFFICERS, TEAMS, type Group } from './schedule'
+import { getCalendarDays, getGroupForDate, getTeamForDate, groupHasOfficer, OFFICERS, type Group } from './schedule'
 
 type Filter = 'all' | 'A' | 'B' | string
 type Theme = 'light' | 'dark'
@@ -62,7 +62,7 @@ function App() {
 
   const copyDay = async (day: Date) => {
     const group = getGroupForDate(day)
-    const team = TEAMS[group]
+    const team = getTeamForDate(day)
     const dayEvents = getDayEvents(day)
     const extras = [
       dayEvents.payment ? 'Pagamento: 5º dia útil' : null,
@@ -159,7 +159,7 @@ function EventBadges({ day, visibility }: { day: Date; visibility: EventVisibili
 
 function DayCard({ day, currentMonth, today, dimmed, selectedOfficer, copied, events, onCopy }: DayProps & { currentMonth: boolean; today: boolean }) {
   const group = getGroupForDate(day)
-  const team = TEAMS[group]
+  const team = getTeamForDate(day)
   const working = selectedOfficer ? groupHasOfficer(group, selectedOfficer) : false
   return <article className={`day-card group-${group.toLowerCase()} ${!currentMonth ? 'outside' : ''} ${today ? 'is-today' : ''} ${dimmed ? 'dimmed' : ''} ${selectedOfficer && !working ? 'day-off' : ''}`}>
     <div className="day-top"><strong><span className="mobile-weekday">{WEEKDAYS[day.getDay()]} • </span>{day.getDate()}<span className="mobile-month"> {SHORT_MONTHS[day.getMonth()]}</span></strong><div>{today && <span className="today-label">HOJE</span>}<span className="group-badge">GRUPO {group}</span></div></div>
@@ -177,7 +177,7 @@ function ScheduleBlock({ title, day, night }: { title: string; day: string; nigh
 
 function DayListRow({ day, today, dimmed, selectedOfficer, copied, events, onCopy }: DayProps & { today: boolean }) {
   const group = getGroupForDate(day)
-  const team = TEAMS[group]
+  const team = getTeamForDate(day)
   const working = selectedOfficer ? groupHasOfficer(group, selectedOfficer) : false
   return <article className={`list-row group-${group.toLowerCase()} ${today ? 'is-today' : ''} ${dimmed ? 'dimmed' : ''}`}><div className="list-date"><strong>{WEEKDAYS[day.getDay()]} <i>•</i> {String(day.getDate()).padStart(2, '0')} {SHORT_MONTHS[day.getMonth()]}</strong>{today && <span className="today-label">HOJE</span>}</div><div className="list-status"><span className="group-badge">GRUPO {group}</span>{selectedOfficer && <span className={`duty-state ${working ? 'working' : ''}`}>{working ? 'Em serviço' : 'Folga'}</span>}</div><EventBadges day={day} visibility={events} /><ScheduleBlock title="CICC — Coordenação" day={team.coordination.day} night={team.coordination.night} /><ScheduleBlock title="Cabine Muralha" day={team.cabin.day} night={team.cabin.night} /><button className="copy-button" onClick={onCopy}>{copied ? <Check size={15} /> : <Clipboard size={15} />}<span>{copied ? 'Copiado' : 'Copiar'}</span></button></article>
 }
