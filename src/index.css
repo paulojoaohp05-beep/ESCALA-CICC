@@ -106,10 +106,6 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
 .filter-scroll button.selected { color: var(--text); border-color: var(--border-strong); background: var(--card-2); }
 .filter-scroll .filter-A.selected { color: var(--group-a); border-color: var(--group-a); background: var(--group-a-soft); }
 .filter-scroll .filter-B.selected { color: var(--group-b); border-color: var(--group-b); background: var(--group-b-soft); }
-.event-controls { padding: 9px 21px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 14px; color: var(--muted); }
-.event-controls > span { font-size: 9px; letter-spacing: .14em; font-weight: 700; }
-.event-controls label { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; cursor: pointer; white-space: nowrap; }
-.event-controls input { margin: 0; accent-color: var(--group-a); }
 .event-badges { display: grid; gap: 4px; margin: 0 0 7px; }
 .event-item { min-width: 0; padding: 5px 7px; border-left: 2px solid; border-radius: 4px; background: var(--card-2); }
 .event-item span, .event-item b { display: block; overflow: hidden; text-overflow: ellipsis; }
@@ -221,10 +217,6 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   .filters { padding: 10px 0 10px 10px; align-items: flex-start; flex-direction: column; gap: 7px; }
   .filter-scroll { width: 100%; padding-right: 10px; }
   .filter-scroll button { min-height: 34px; padding: 7px 12px; font-size: 12px; }
-  .event-controls { padding: 9px 10px; gap: 11px; overflow-x: auto; scrollbar-width: none; }
-  .event-controls::-webkit-scrollbar { display: none; }
-  .event-controls > span { display: none; }
-  .event-controls label { flex: none; min-height: 28px; font-size: 11px; }
   .week-header { display: none; }
   .calendar-grid { display: block; padding: 8px; background: var(--bg); }
   .day-card { min-height: 0; margin-bottom: 8px; padding: 13px 14px 11px; border: 1px solid var(--border) !important; border-radius: 10px; background: var(--panel); }
@@ -279,7 +271,7 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   :root, :root[data-theme='light'] { --bg: #fff; --panel: #fff; --card: #fff; --card-2: #f5f5f5; --border: #c9cdd2; --text: #111; --muted: #555; --group-a: #2d6174; --group-a-soft: #fff; --group-b: #584b78; --group-b-soft: #fff; --shadow: none; }
   @page { margin: 10mm; size: landscape; }
   body { background: #fff; color: #111; }
-  .topbar, .hero, .stats-grid, .filters, .event-controls, .toolbar-actions, .mobile-month-nav, .legend, .copy-button { display: none !important; }
+  .topbar, .hero, .stats-grid, .filters, .toolbar-actions, .mobile-month-nav, .legend, .copy-button { display: none !important; }
   main { max-width: none; padding: 0; }
   .calendar-panel { border: 0; border-radius: 0; box-shadow: none; overflow: visible; }
   .calendar-toolbar { display: block; padding: 0 0 10px; }

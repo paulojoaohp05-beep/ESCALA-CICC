@@ -10,6 +10,7 @@ type Theme = 'light' | 'dark'
 type View = 'grid' | 'list'
 type EventVisibility = { payment: boolean; holidays: boolean; commemorative: boolean }
 
+const VISIBLE_EVENTS: EventVisibility = { payment: true, holidays: true, commemorative: true }
 const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 const SHORT_MONTHS = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
 const WEEKDAYS = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
@@ -40,7 +41,7 @@ function App() {
   const [view, setView] = useState<View>(getInitialView)
   const [theme, setTheme] = useState<Theme>(getInitialTheme)
   const [copied, setCopied] = useState<string | null>(null)
-  const [events, setEvents] = useState<EventVisibility>({ payment: true, holidays: true, commemorative: true })
+  const events = VISIBLE_EVENTS
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -58,7 +59,6 @@ function App() {
   const goToday = () => setCursor(new Date(today.getFullYear(), today.getMonth(), 1))
   const setMonth = (month: number) => setCursor((date) => new Date(date.getFullYear(), month, 1))
   const setYear = (year: number) => setCursor((date) => new Date(year, date.getMonth(), 1))
-  const toggleEvent = (key: keyof EventVisibility) => setEvents((current) => ({ ...current, [key]: !current[key] }))
 
   const copyDay = async (day: Date) => {
     const group = getGroupForDate(day)
@@ -117,10 +117,9 @@ function App() {
           <div className="filters">
             <span>DESTACAR</span>
             <div className="filter-scroll">
-              {[['all', 'Todos'], ['A', 'Grupo A'], ['B', 'Grupo B'], ...OFFICERS.map((officer) => [officer, officer])].map(([value, label]) => <button key={value} className={`${filter === value ? 'selected' : ''} filter-${value}`} onClick={() => setFilter(value)}>{label}</button>)}
+              {[['all', 'Todos'], ['A', 'Grupo A'], ['B', 'Grupo B']].map(([value, label]) => <button key={value} className={`${filter === value ? 'selected' : ''} filter-${value}`} onClick={() => setFilter(value)}>{label}</button>)}
             </div>
           </div>
-          <div className="event-controls"><span>EXIBIR</span><label><input type="checkbox" checked={events.payment} onChange={() => toggleEvent('payment')} /> Pagamento</label><label><input type="checkbox" checked={events.holidays} onChange={() => toggleEvent('holidays')} /> Feriados</label><label><input type="checkbox" checked={events.commemorative} onChange={() => toggleEvent('commemorative')} /> Datas comemorativas</label></div>
 
           {view === 'grid' ? (
             <div className="calendar-wrap">
