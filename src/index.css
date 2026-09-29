@@ -271,35 +271,34 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   main { width: 100%; max-width: none; margin: 0; padding: 0; }
   .calendar-panel { border: 0; border-radius: 0; box-shadow: none; overflow: visible; break-inside: avoid; page-break-inside: avoid; }
   .print-calendar { display: block; width: 100%; break-inside: avoid; page-break-inside: avoid; }
-  .print-calendar h1 { height: 6mm; margin: 0; font: 700 13px/6mm Manrope, sans-serif; color: #111; text-align: center; }
-  .print-calendar .calendar-wrap { height: 194mm; border: .3mm solid #777; overflow: hidden; break-inside: avoid; page-break-inside: avoid; }
-  .print-calendar .week-header { display: grid; height: 5mm; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-  .print-calendar .week-header div { padding: 0; background: #fff; border-color: #999; color: #222; font-size: 7px; line-height: 5mm; }
-  .print-calendar .calendar-grid { display: grid; height: 189mm; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-template-rows: repeat(6, 31.5mm); overflow: hidden; }
-  .print-calendar .day-card { display: grid; grid-template-rows: 3.5mm minmax(0, 5.5mm) 7mm 7mm 3.5mm; min-width: 0; min-height: 0; height: 31.5mm; margin: 0; padding: 1mm 1.2mm; overflow: hidden; border-radius: 0; border-color: #aaa; background: #fff !important; color: #111; box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
+  .print-calendar h1 { height: 8mm; margin: 0; font: 700 14px/8mm Manrope, sans-serif; color: #111; text-align: center; }
+  .print-calendar .calendar-wrap { height: 186mm; border: .3mm solid #777; overflow: hidden; break-inside: avoid; page-break-inside: avoid; }
+  .print-calendar .week-header { display: grid; height: 6mm; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .print-calendar .week-header div { padding: 0; background: #fff; border-color: #999; color: #222; font-size: 7px; line-height: 6mm; }
+  .print-calendar .calendar-grid { display: grid; height: 180mm; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-template-rows: repeat(6, 30mm); overflow: hidden; }
+  .print-calendar .day-card { display: block; position: relative; min-width: 0; min-height: 0; height: 30mm; margin: 0; padding: 1.2mm 1.4mm 4.5mm; overflow: hidden; border-radius: 0; border-color: #aaa; background: #fff !important; color: #111; box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
   .print-calendar .day-card.outside { visibility: visible; opacity: .18; }
   .print-calendar .day-card.outside > *:not(.day-top) { visibility: hidden; }
   .print-calendar .day-card.outside .day-top > div { visibility: hidden; }
   .print-calendar .day-card.is-today { box-shadow: inset 0 0 0 .4mm #444; }
-  .print-calendar .day-top { height: auto; margin: 0; align-items: flex-start; }
+  .print-calendar .day-top { height: 4mm; margin: 0 0 .5mm; align-items: flex-start; }
   .print-calendar .day-top > strong { font-size: 10px; line-height: 1; }
-  .print-calendar .day-top > div { gap: .7mm; }
-  .print-calendar .group-badge, .print-calendar .today-label { padding: .3mm .8mm; border: .2mm solid currentColor; background: #fff; font-size: 7px; line-height: 1; }
+  .print-calendar .day-top > div { gap: 1mm; }
+  .print-calendar .group-badge, .print-calendar .today-label { padding: .4mm 1mm; border: .2mm solid currentColor; background: #fff; font-size: 7px; line-height: 1; }
   .print-calendar .mobile-weekday, .print-calendar .mobile-month, .print-calendar .duty-state { display: none !important; }
-  .print-calendar .event-badges { align-self: stretch; max-height: none; margin: 0; gap: .2mm; overflow: hidden; }
-  .print-calendar .event-item { min-height: 0; padding: .15mm .6mm; border-left-width: .4mm; background: #fff; white-space: nowrap; overflow: hidden; }
-  .print-calendar .event-item span { display: inline; font-size: 5.8px; line-height: 1; }
-  .print-calendar .event-item span::after { content: ' ·'; }
-  .print-calendar .event-item b { display: inline; margin: 0 0 0 .5mm; color: #222; font-size: 6.5px; line-height: 1; white-space: nowrap; }
-  .print-calendar .schedule-block { display: block; min-height: 0; padding: .45mm 0 .2mm; overflow: hidden; border-color: #bbb; }
-  .print-calendar .schedule-block h3 { margin: 0 0 .2mm; color: #333; font-size: 6.7px; line-height: 1; letter-spacing: .01em; }
-  .print-calendar .schedule-block p { display: flex; flex-direction: row; align-items: baseline; justify-content: flex-start; gap: .7mm; margin: .1mm 0; font-size: 7px; line-height: 1.1; }
+  .print-calendar .event-badges { max-height: 7mm; margin: 0 0 .4mm; gap: .3mm; overflow: hidden; }
+  .print-calendar .event-item { padding: .2mm .7mm; border-left-width: .5mm; background: #fff; }
+  .print-calendar .event-item span { display: inline; font-size: 6px; line-height: 1; }
+  .print-calendar .event-item b { display: inline; margin: 0 0 0 .7mm; color: #222; font-size: 7px; line-height: 1.05; white-space: normal; }
+  .print-calendar .schedule-block { display: block; padding: .55mm 0 .3mm; border-color: #bbb; }
+  .print-calendar .schedule-block h3 { margin: 0 0 .2mm; color: #333; font-size: 7px; line-height: 1; letter-spacing: .02em; }
+  .print-calendar .schedule-block p { display: flex; flex-direction: row; align-items: baseline; justify-content: flex-start; gap: .8mm; margin: .1mm 0; font-size: 7px; line-height: 1.1; }
   .print-calendar .schedule-block p span { flex: 0 0 7mm; color: #555; }
-  .print-calendar .schedule-block p b { width: auto; max-width: 23mm; color: #111; font-size: 7.5px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .print-calendar .schedule-block p b { width: auto; max-width: 23mm; color: #111; font-size: 7.5px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .print-calendar .copom-team { margin: 0; color: #444; font-size: 6.5px; line-height: 1; }
   .print-calendar .copom-team::before { content: '('; }
   .print-calendar .copom-team::after { content: ')'; }
-  .print-calendar .public-policies { display: flex; align-items: center; align-self: stretch; gap: 1mm; min-height: 0; padding: .3mm 0 0; overflow: visible; border-color: #999; }
+  .print-calendar .public-policies { position: absolute; right: 1.4mm; bottom: .8mm; left: 1.4mm; display: flex; align-items: baseline; gap: 1mm; padding: .5mm 0 0; overflow: visible; border-color: #999; }
   .print-calendar .public-policies h3 { margin: 0; color: #333; font-size: 0; line-height: 1; }
   .print-calendar .public-policies h3::before { content: 'PP:'; font-size: 6.5px; }
   .print-calendar .public-policies b { flex: none; overflow: visible; color: #111; font-size: 7.5px; line-height: 1; white-space: nowrap; }
