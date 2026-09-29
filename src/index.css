@@ -271,12 +271,12 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   main { width: 100%; max-width: none; margin: 0; padding: 0; }
   .calendar-panel { border: 0; border-radius: 0; box-shadow: none; overflow: visible; break-inside: avoid; page-break-inside: avoid; }
   .print-calendar { display: block; width: 100%; break-inside: avoid; page-break-inside: avoid; }
-  .print-calendar h1 { height: 8mm; margin: 0; font: 700 14px/8mm Manrope, sans-serif; color: #111; text-align: center; }
-  .print-calendar .calendar-wrap { height: 186mm; border: .3mm solid #777; overflow: hidden; break-inside: avoid; page-break-inside: avoid; }
-  .print-calendar .week-header { display: grid; height: 6mm; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-  .print-calendar .week-header div { padding: 0; background: #fff; border-color: #999; color: #222; font-size: 7px; line-height: 6mm; }
-  .print-calendar .calendar-grid { display: grid; height: 180mm; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-template-rows: repeat(6, 30mm); overflow: hidden; }
-  .print-calendar .day-card { display: block; position: relative; min-width: 0; min-height: 0; height: 30mm; margin: 0; padding: 1.2mm 1.4mm 4.5mm; overflow: hidden; border-radius: 0; border-color: #aaa; background: #fff !important; color: #111; box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
+  .print-calendar h1 { height: 6mm; margin: 0; font: 700 13px/6mm Manrope, sans-serif; color: #111; text-align: center; }
+  .print-calendar .calendar-wrap { height: 170mm; border: .3mm solid #777; overflow: hidden; break-inside: avoid; page-break-inside: avoid; }
+  .print-calendar .week-header { display: grid; height: 5mm; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .print-calendar .week-header div { padding: 0; background: #fff; border-color: #999; color: #222; font-size: 7px; line-height: 5mm; }
+  .print-calendar .calendar-grid { display: grid; height: 165mm; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-template-rows: repeat(6, 27.5mm); overflow: hidden; }
+  .print-calendar .day-card { display: block; position: relative; min-width: 0; min-height: 0; height: 27.5mm; margin: 0; padding: 1mm 1.4mm 4.5mm; overflow: hidden; border-radius: 0; border-color: #aaa; background: #fff !important; color: #111; box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
   .print-calendar .day-card.outside { visibility: visible; opacity: .18; }
   .print-calendar .day-card.outside > *:not(.day-top) { visibility: hidden; }
   .print-calendar .day-card.outside .day-top > div { visibility: hidden; }
@@ -286,19 +286,7 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   .print-calendar .day-top > div { gap: 1mm; }
   .print-calendar .group-badge, .print-calendar .today-label { padding: .4mm 1mm; border: .2mm solid currentColor; background: #fff; font-size: 7px; line-height: 1; }
   .print-calendar .mobile-weekday, .print-calendar .mobile-month, .print-calendar .duty-state { display: none !important; }
-  .print-calendar .event-badges { display: block; max-height: 4mm; margin: 0 0 .25mm; overflow: hidden; }
-  .print-calendar .event-badges:empty { display: none; margin: 0; }
-  .print-calendar .event-item { display: flex; align-items: baseline; gap: .6mm; min-width: 0; margin: 0; padding: 0; overflow: hidden; border: 0; border-radius: 0; background: transparent; color: #333; line-height: 1.05; }
-  .print-calendar .event-item span { flex: none; font-size: 0; font-weight: 700; line-height: 1.05; }
-  .print-calendar .event-item span::before { font-size: 6px; }
-  .print-calendar .event-item span::after { content: '·'; margin-left: .6mm; font-size: 6px; }
-  .print-calendar .event-item.payment span::before { content: 'PAGAMENTO'; }
-  .print-calendar .event-item.holiday-national span::before { content: 'NACIONAL'; }
-  .print-calendar .event-item.holiday-state span::before { content: 'ESTADUAL'; }
-  .print-calendar .event-item.holiday-municipal span::before { content: 'MUNICIPAL'; }
-  .print-calendar .event-item.commemorative span::before { content: 'COMEM.'; }
-  .print-calendar .event-item.optional span::before { content: 'P. FACULTATIVO'; }
-  .print-calendar .event-item b { display: block; min-width: 0; margin: 0; overflow: hidden; color: #222; font-size: 6.5px; line-height: 1.05; text-overflow: ellipsis; white-space: nowrap; }
+  .print-calendar .event-badges { display: none !important; }
   .print-calendar .schedule-block { display: block; padding: .55mm 0 .3mm; border-color: #bbb; }
   .print-calendar .schedule-block h3 { margin: 0 0 .2mm; color: #333; font-size: 7px; line-height: 1; letter-spacing: .02em; }
   .print-calendar .schedule-block p { display: flex; flex-direction: row; align-items: baseline; justify-content: flex-start; gap: .8mm; margin: .1mm 0; font-size: 7px; line-height: 1.1; }
@@ -311,4 +299,8 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   .print-calendar .public-policies h3 { margin: 0; color: #333; font-size: 0; line-height: 1; }
   .print-calendar .public-policies h3::before { content: 'PP:'; font-size: 6.5px; }
   .print-calendar .public-policies b { flex: none; overflow: visible; color: #111; font-size: 7.5px; line-height: 1; white-space: nowrap; }
+  .print-footnotes { height: 24mm; padding-top: 1.5mm; overflow: hidden; color: #222; break-inside: avoid; page-break-inside: avoid; }
+  .print-footnotes h2 { height: 3mm; margin: 0 0 .8mm; font: 700 8px/3mm Manrope, sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+  .print-footnotes ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8mm 4mm; margin: 0; padding: 0; list-style: none; }
+  .print-footnotes li { min-width: 0; overflow: hidden; font-size: 7px; line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
 }
