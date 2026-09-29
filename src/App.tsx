@@ -53,7 +53,7 @@ function App() {
   const groupCounts = { A: monthDays.filter((day) => getGroupForDate(day) === 'A').length, B: monthDays.filter((day) => getGroupForDate(day) === 'B').length }
   const selectedOfficer = OFFICERS.includes(filter) ? filter : null
   const officerWorkDays = selectedOfficer ? monthDays.filter((day) => groupHasOfficer(getGroupForDate(day), selectedOfficer)).length : 0
-  const years = Array.from({ length: 501 }, (_, index) => 1900 + index)
+  const years = [2026, 2027, 2028]
 
   const moveMonth = (amount: number) => setCursor((date) => new Date(date.getFullYear(), date.getMonth() + amount, 1))
   const goToday = () => setCursor(new Date(today.getFullYear(), today.getMonth(), 1))

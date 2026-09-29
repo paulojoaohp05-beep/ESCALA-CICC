@@ -7,12 +7,12 @@ export type Team = {
 
 export const TEAMS: Record<Group, Team> = {
   A: {
-    coordination: { day: 'SGT Deyse', night: 'SGT Campos' },
+    coordination: { day: 'Deyse', night: 'Campos' },
     cabin: { day: 'Jéssica', night: 'Nedilson' },
   },
   B: {
-    coordination: { day: 'SGT Bessane', night: 'SGT De Souza' },
-    cabin: { day: 'SD Larissa', night: 'R. Santos' },
+    coordination: { day: 'Bessane', night: 'De Souza' },
+    cabin: { day: 'Larissa', night: 'R. Santos' },
   },
 }
 
