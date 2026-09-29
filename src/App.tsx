@@ -55,10 +55,10 @@ function App() {
     const dayEvents = getDayEvents(day)
     const date = `${String(day.getDate()).padStart(2, '0')}/${String(day.getMonth() + 1).padStart(2, '0')}`
     return [
-      dayEvents.payment ? `${date} — Pagamento: 5º dia útil` : null,
-      dayEvents.holiday ? `${date} — ${CATEGORY_LABELS[dayEvents.holiday.category]}: ${dayEvents.holiday.name}` : null,
-      dayEvents.optional ? `${date} — Ponto facultativo: ${dayEvents.optional.name}` : null,
-      dayEvents.commemorative ? `${date} — Data comemorativa: ${dayEvents.commemorative.name}` : null,
+      dayEvents.payment ? `${date} — 5º dia útil` : null,
+      dayEvents.holiday ? `${date} — ${dayEvents.holiday.name}` : null,
+      dayEvents.optional ? `${date} — ${dayEvents.optional.name} (ponto facultativo)` : null,
+      dayEvents.commemorative ? `${date} — ${dayEvents.commemorative.name}` : null,
     ].filter((item): item is string => item !== null)
   })
   const selectedOfficer = OFFICERS.includes(filter) ? filter : null
@@ -125,7 +125,7 @@ function App() {
               <div className="week-header">{WEEKDAYS.map((day) => <div key={day}>{day}</div>)}</div>
               <div className="calendar-grid">{days.map((day) => <DayCard key={day.toISOString()} day={day} currentMonth={day.getMonth() === cursor.getMonth()} today={sameDay(day, today)} dimmed={false} selectedOfficer={null} events={VISIBLE_EVENTS} />)}</div>
             </div>
-            <div className="print-footnotes"><h2>Ocorrências do mês</h2><ul>{printMonthEvents.map((item) => <li key={item}>{item}</li>)}</ul></div>
+            <div className="print-footnotes"><h2>Datas do mês</h2><ul>{printMonthEvents.map((item) => <li key={item}>{item}</li>)}</ul></div>
           </div>
 
           <footer className="legend"><span>LEGENDA</span><div><i className="dot group-a" /> Grupo A</div><div><i className="dot group-b" /> Grupo B</div><div><i className="today-outline" /> Hoje</div><div><i className="dot payment" /> Pagamento</div><div><i className="dot national" /> Feriado nacional</div><div><i className="dot state" /> Estadual</div><div><i className="dot municipal" /> Municipal</div><div><i className="dot commemorative" /> Data comemorativa</div>{selectedOfficer && <><div><i className="dot service" /> Serviço</div><div><i className="dot off" /> Folga</div></>}</footer>
