@@ -1,7 +1,7 @@
 export type CopomSchedule = { day: string; night: string }
 
-const COPOM_DAY = ['E', 'B', 'A', 'B', 'A'] as const
-const COPOM_NIGHT = ['C', 'D', 'E', 'C', 'D'] as const
+const COPOM_DAY = ['BORGES', 'HONORATO', 'SENA', 'HONORATO', 'SENA'] as const
+const COPOM_NIGHT = ['PANDORI', 'MACHADO', 'BORGES', 'PANDORI', 'MACHADO'] as const
 const MS_PER_DAY = 86_400_000
 const BASE_COPOM_UTC = Date.UTC(2026, 8, 1)
 

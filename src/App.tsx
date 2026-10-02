@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CalendarDays, ChevronLeft, ChevronRight, Grid2X2, List, Moon, Printer, Sun, Users } from 'lucide-react'
+import { getHolidaysForYear } from './brasilApiHolidays'
 import { getCommemorativeDate } from './commemorativeDates'
 import { getCopomSchedule, type CopomSchedule } from './copomSchedule'
-import { getHoliday, getOptionalDate, type HolidayCategory } from './holidays'
+import { dateKey, getHolidays, getOptionalDate, type Holiday, type HolidayCategory } from './holidays'
 import { getFifthBusinessDay } from './payment'
 import { getPublicPoliciesOfficer } from './publicPoliciesSchedule'
 import { getCalendarDays, getGroupForDate, getTeamForDate, groupHasOfficer, OFFICERS, type Group } from './schedule'
@@ -13,6 +14,7 @@ type View = 'grid' | 'list'
 type EventVisibility = { payment: boolean; holidays: boolean; commemorative: boolean }
 
 const VISIBLE_EVENTS: EventVisibility = { payment: true, holidays: true, commemorative: true }
+const YEARS = [2026, 2027, 2028]
 const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 const SHORT_MONTHS = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
 const WEEKDAYS = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
@@ -26,12 +28,13 @@ const getInitialTheme = (): Theme => {
 }
 const getInitialView = (): View => window.matchMedia('(max-width: 767px)').matches ? 'list' : 'grid'
 
-function getDayEvents(day: Date) {
+function getDayEvents(day: Date, holidays: Holiday[]) {
+  const key = dateKey(day)
   return {
-    holiday: getHoliday(day),
+    holiday: holidays.find((holiday) => dateKey(holiday.date) === key) ?? null,
     optional: getOptionalDate(day),
     commemorative: getCommemorativeDate(day),
-    payment: sameDay(day, getFifthBusinessDay(day.getFullYear(), day.getMonth())),
+    payment: sameDay(day, getFifthBusinessDay(day.getFullYear(), day.getMonth(), holidays)),
   }
 }
 
@@ -41,6 +44,7 @@ function App() {
   const [filter, setFilter] = useState<Filter>('all')
   const [view, setView] = useState<View>(getInitialView)
   const [theme, setTheme] = useState<Theme>(getInitialTheme)
+  const [holidaysByYear, setHolidaysByYear] = useState<Record<number, Holiday[]>>(() => Object.fromEntries(YEARS.map((year) => [year, getHolidays(year)])))
   const events = VISIBLE_EVENTS
 
   useEffect(() => {
@@ -48,11 +52,20 @@ function App() {
     localStorage.setItem('escala-cicc-theme', theme)
   }, [theme])
 
+  useEffect(() => {
+    let active = true
+    Promise.all(YEARS.map(async (year) => [year, await getHolidaysForYear(year)] as const)).then((entries) => {
+      if (active) setHolidaysByYear(Object.fromEntries(entries))
+    })
+    return () => { active = false }
+  }, [])
+
   const days = useMemo(() => getCalendarDays(cursor.getFullYear(), cursor.getMonth()), [cursor])
   const monthDays = days.filter((day) => day.getMonth() === cursor.getMonth())
+  const currentHolidays = holidaysByYear[cursor.getFullYear()] ?? getHolidays(cursor.getFullYear())
   const groupCounts = { A: monthDays.filter((day) => getGroupForDate(day) === 'A').length, B: monthDays.filter((day) => getGroupForDate(day) === 'B').length }
   const printMonthEvents = monthDays.flatMap((day) => {
-    const dayEvents = getDayEvents(day)
+    const dayEvents = getDayEvents(day, currentHolidays)
     const date = `${String(day.getDate()).padStart(2, '0')}/${String(day.getMonth() + 1).padStart(2, '0')}`
     return [
       dayEvents.payment ? `${date} — 5º dia útil` : null,
@@ -63,7 +76,7 @@ function App() {
   })
   const selectedOfficer = OFFICERS.includes(filter) ? filter : null
   const officerWorkDays = selectedOfficer ? monthDays.filter((day) => groupHasOfficer(getGroupForDate(day), selectedOfficer)).length : 0
-  const years = [2026, 2027, 2028]
+  const years = YEARS
 
   const moveMonth = (amount: number) => setCursor((date) => new Date(date.getFullYear(), date.getMonth() + amount, 1))
   const goToday = () => setCursor(new Date(today.getFullYear(), today.getMonth(), 1))
@@ -113,17 +126,17 @@ function App() {
             {view === 'grid' ? (
               <div className="calendar-wrap">
                 <div className="week-header">{WEEKDAYS.map((day) => <div key={day}>{day}</div>)}</div>
-                <div className="calendar-grid">{days.map((day) => <DayCard key={day.toISOString()} day={day} currentMonth={day.getMonth() === cursor.getMonth()} today={sameDay(day, today)} dimmed={!isEmphasized(getGroupForDate(day))} selectedOfficer={selectedOfficer} events={events} />)}</div>
+                <div className="calendar-grid">{days.map((day) => <DayCard key={day.toISOString()} day={day} currentMonth={day.getMonth() === cursor.getMonth()} today={sameDay(day, today)} dimmed={!isEmphasized(getGroupForDate(day))} selectedOfficer={selectedOfficer} events={events} holidays={currentHolidays} />)}</div>
               </div>
             ) : (
-              <div className="list-view">{monthDays.map((day) => <DayListRow key={day.toISOString()} day={day} today={sameDay(day, today)} dimmed={!isEmphasized(getGroupForDate(day))} selectedOfficer={selectedOfficer} events={events} />)}</div>
+              <div className="list-view">{monthDays.map((day) => <DayListRow key={day.toISOString()} day={day} today={sameDay(day, today)} dimmed={!isEmphasized(getGroupForDate(day))} selectedOfficer={selectedOfficer} events={events} holidays={currentHolidays} />)}</div>
             )}
           </div>
           <div className="print-calendar">
             <h1>ESCALA CICC — {MONTHS[cursor.getMonth()].toUpperCase()} {cursor.getFullYear()}</h1>
             <div className="calendar-wrap">
               <div className="week-header">{WEEKDAYS.map((day) => <div key={day}>{day}</div>)}</div>
-              <div className="calendar-grid">{days.map((day) => <DayCard key={day.toISOString()} day={day} currentMonth={day.getMonth() === cursor.getMonth()} today={sameDay(day, today)} dimmed={false} selectedOfficer={null} events={VISIBLE_EVENTS} />)}</div>
+              <div className="calendar-grid">{days.map((day) => <DayCard key={day.toISOString()} day={day} currentMonth={day.getMonth() === cursor.getMonth()} today={sameDay(day, today)} dimmed={false} selectedOfficer={null} events={VISIBLE_EVENTS} holidays={currentHolidays} />)}</div>
             </div>
             <div className="print-footnotes"><h2>Datas do mês</h2><ul>{printMonthEvents.map((item) => <li key={item}>{item}</li>)}</ul></div>
           </div>
@@ -135,10 +148,10 @@ function App() {
   )
 }
 
-type DayProps = { day: Date; dimmed: boolean; selectedOfficer: string | null; events: EventVisibility }
+type DayProps = { day: Date; dimmed: boolean; selectedOfficer: string | null; events: EventVisibility; holidays: Holiday[] }
 
-function EventBadges({ day, visibility }: { day: Date; visibility: EventVisibility }) {
-  const dayEvents = getDayEvents(day)
+function EventBadges({ day, visibility, holidays }: { day: Date; visibility: EventVisibility; holidays: Holiday[] }) {
+  const dayEvents = getDayEvents(day, holidays)
   return <div className="event-badges">
     {visibility.payment && dayEvents.payment && <div className="event-item payment"><span>Pagamento</span><b>5º dia útil</b></div>}
     {visibility.holidays && dayEvents.holiday && <div className={`event-item holiday-${dayEvents.holiday.category}`}><span>{CATEGORY_LABELS[dayEvents.holiday.category]}</span><b>{dayEvents.holiday.name}</b></div>}
@@ -147,7 +160,7 @@ function EventBadges({ day, visibility }: { day: Date; visibility: EventVisibili
   </div>
 }
 
-function DayCard({ day, currentMonth, today, dimmed, selectedOfficer, events }: DayProps & { currentMonth: boolean; today: boolean }) {
+function DayCard({ day, currentMonth, today, dimmed, selectedOfficer, events, holidays }: DayProps & { currentMonth: boolean; today: boolean }) {
   const group = getGroupForDate(day)
   const team = getTeamForDate(day)
   const copom = getCopomSchedule(day)
@@ -155,9 +168,9 @@ function DayCard({ day, currentMonth, today, dimmed, selectedOfficer, events }: 
   const working = selectedOfficer ? groupHasOfficer(group, selectedOfficer) : false
   return <article className={`day-card group-${group.toLowerCase()} ${!currentMonth ? 'outside' : ''} ${today ? 'is-today' : ''} ${dimmed ? 'dimmed' : ''} ${selectedOfficer && !working ? 'day-off' : ''}`}>
     <div className="day-top"><strong><span className="mobile-weekday">{WEEKDAYS[day.getDay()]} • </span>{day.getDate()}<span className="mobile-month"> {SHORT_MONTHS[day.getMonth()]}</span></strong><div>{today && <span className="today-label">HOJE</span>}<span className="group-badge">GRUPO {group}</span></div></div>
-    <EventBadges day={day} visibility={events} />
+    <EventBadges day={day} visibility={events} holidays={holidays} />
     {selectedOfficer && <div className={`duty-state ${working ? 'working' : ''}`}>{working ? 'Em serviço' : 'Folga'}</div>}
-    <ScheduleBlock title="CICC — Coordenação" day={team.coordination.day} night={team.coordination.night} copom={copom} />
+    <ScheduleBlock title="Coordenação" day={team.coordination.day} night={team.coordination.night} copom={copom} />
     <ScheduleBlock title="Cabine Muralha" day={team.cabin.day} night={team.cabin.night} copom={copom} />
     <PublicPoliciesBlock officer={publicPoliciesOfficer} />
   </article>
@@ -171,13 +184,13 @@ function PublicPoliciesBlock({ officer }: { officer: string }) {
   return <div className="public-policies"><h3>Políticas Públicas</h3><b>{officer}</b></div>
 }
 
-function DayListRow({ day, today, dimmed, selectedOfficer, events }: DayProps & { today: boolean }) {
+function DayListRow({ day, today, dimmed, selectedOfficer, events, holidays }: DayProps & { today: boolean }) {
   const group = getGroupForDate(day)
   const team = getTeamForDate(day)
   const copom = getCopomSchedule(day)
   const publicPoliciesOfficer = getPublicPoliciesOfficer(day)
   const working = selectedOfficer ? groupHasOfficer(group, selectedOfficer) : false
-  return <article className={`list-row group-${group.toLowerCase()} ${today ? 'is-today' : ''} ${dimmed ? 'dimmed' : ''}`}><div className="list-date"><strong>{WEEKDAYS[day.getDay()]} <i>•</i> {String(day.getDate()).padStart(2, '0')} {SHORT_MONTHS[day.getMonth()]}</strong>{today && <span className="today-label">HOJE</span>}</div><div className="list-status"><span className="group-badge">GRUPO {group}</span>{selectedOfficer && <span className={`duty-state ${working ? 'working' : ''}`}>{working ? 'Em serviço' : 'Folga'}</span>}</div><EventBadges day={day} visibility={events} /><ScheduleBlock title="CICC — Coordenação" day={team.coordination.day} night={team.coordination.night} copom={copom} /><ScheduleBlock title="Cabine Muralha" day={team.cabin.day} night={team.cabin.night} copom={copom} /><PublicPoliciesBlock officer={publicPoliciesOfficer} /></article>
+  return <article className={`list-row group-${group.toLowerCase()} ${today ? 'is-today' : ''} ${dimmed ? 'dimmed' : ''}`}><div className="list-date"><strong>{WEEKDAYS[day.getDay()]} <i>•</i> {String(day.getDate()).padStart(2, '0')} {SHORT_MONTHS[day.getMonth()]}</strong>{today && <span className="today-label">HOJE</span>}</div><div className="list-status"><span className="group-badge">GRUPO {group}</span>{selectedOfficer && <span className={`duty-state ${working ? 'working' : ''}`}>{working ? 'Em serviço' : 'Folga'}</span>}</div><EventBadges day={day} visibility={events} holidays={holidays} /><ScheduleBlock title="Coordenação" day={team.coordination.day} night={team.coordination.night} copom={copom} /><ScheduleBlock title="Cabine Muralha" day={team.cabin.day} night={team.cabin.night} copom={copom} /><PublicPoliciesBlock officer={publicPoliciesOfficer} /></article>
 }
 
 export default App
