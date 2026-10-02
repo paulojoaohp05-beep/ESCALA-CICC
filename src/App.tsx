@@ -171,13 +171,13 @@ function DayCard({ day, currentMonth, today, dimmed, selectedOfficer, events, ho
     <EventBadges day={day} visibility={events} holidays={holidays} />
     {selectedOfficer && <div className={`duty-state ${working ? 'working' : ''}`}>{working ? 'Em serviço' : 'Folga'}</div>}
     <ScheduleBlock title="Coordenação" day={team.coordination.day} night={team.coordination.night} copom={copom} />
-    <ScheduleBlock title="Cabine Muralha" day={team.cabin.day} night={team.cabin.night} copom={copom} />
+    <ScheduleBlock title="Cabine Muralha" day={team.cabin.day} night={team.cabin.night} />
     <PublicPoliciesBlock officer={publicPoliciesOfficer} />
   </article>
 }
 
-function ScheduleBlock({ title, day, night, copom }: { title: string; day: string; night: string; copom: CopomSchedule }) {
-  return <div className="schedule-block"><h3>{title}</h3><p><span>Dia</span><b>{day}</b><em className="copom-team">COPOM {copom.day}</em></p><p><span>Noite</span><b>{night}</b><em className="copom-team">COPOM {copom.night}</em></p></div>
+function ScheduleBlock({ title, day, night, copom }: { title: string; day: string; night: string; copom?: CopomSchedule }) {
+  return <div className="schedule-block"><h3>{title}</h3><p><span>Dia</span><b>{day}</b>{copom && <em className="copom-team">COPOM {copom.day}</em>}</p><p><span>Noite</span><b>{night}</b>{copom && <em className="copom-team">COPOM {copom.night}</em>}</p></div>
 }
 
 function PublicPoliciesBlock({ officer }: { officer: string }) {
@@ -190,7 +190,7 @@ function DayListRow({ day, today, dimmed, selectedOfficer, events, holidays }: D
   const copom = getCopomSchedule(day)
   const publicPoliciesOfficer = getPublicPoliciesOfficer(day)
   const working = selectedOfficer ? groupHasOfficer(group, selectedOfficer) : false
-  return <article className={`list-row group-${group.toLowerCase()} ${today ? 'is-today' : ''} ${dimmed ? 'dimmed' : ''}`}><div className="list-date"><strong>{WEEKDAYS[day.getDay()]} <i>•</i> {String(day.getDate()).padStart(2, '0')} {SHORT_MONTHS[day.getMonth()]}</strong>{today && <span className="today-label">HOJE</span>}</div><div className="list-status"><span className="group-badge">GRUPO {group}</span>{selectedOfficer && <span className={`duty-state ${working ? 'working' : ''}`}>{working ? 'Em serviço' : 'Folga'}</span>}</div><EventBadges day={day} visibility={events} holidays={holidays} /><ScheduleBlock title="Coordenação" day={team.coordination.day} night={team.coordination.night} copom={copom} /><ScheduleBlock title="Cabine Muralha" day={team.cabin.day} night={team.cabin.night} copom={copom} /><PublicPoliciesBlock officer={publicPoliciesOfficer} /></article>
+  return <article className={`list-row group-${group.toLowerCase()} ${today ? 'is-today' : ''} ${dimmed ? 'dimmed' : ''}`}><div className="list-date"><strong>{WEEKDAYS[day.getDay()]} <i>•</i> {String(day.getDate()).padStart(2, '0')} {SHORT_MONTHS[day.getMonth()]}</strong>{today && <span className="today-label">HOJE</span>}</div><div className="list-status"><span className="group-badge">GRUPO {group}</span>{selectedOfficer && <span className={`duty-state ${working ? 'working' : ''}`}>{working ? 'Em serviço' : 'Folga'}</span>}</div><EventBadges day={day} visibility={events} holidays={holidays} /><ScheduleBlock title="Coordenação" day={team.coordination.day} night={team.coordination.night} copom={copom} /><ScheduleBlock title="Cabine Muralha" day={team.cabin.day} night={team.cabin.night} /><PublicPoliciesBlock officer={publicPoliciesOfficer} /></article>
 }
 
 export default App
