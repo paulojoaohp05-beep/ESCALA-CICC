@@ -131,10 +131,10 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
 .today-label { color: var(--text); border: 1px solid color-mix(in srgb, var(--group-a) 55%, transparent); background: var(--group-a-soft); }
 .schedule-block { border-top: 1px solid var(--border); padding: 8px 0 6px; }
 .schedule-block h3 { color: var(--muted); font-size: 9px; text-transform: uppercase; letter-spacing: .09em; margin: 0 0 6px; }
-.schedule-block p { display: flex; align-items: center; justify-content: space-between; gap: 5px; margin: 3px 0; font-size: 9px; }
+.schedule-block p { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 5px; margin: 3px 0; font-size: 9px; }
 .schedule-block p span { color: var(--muted); }
 .schedule-block p b { min-width: 0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.copom-team { flex: none; color: var(--muted); font-size: 7px; font-style: normal; font-weight: 700; letter-spacing: .04em; white-space: nowrap; }
+.copom-team { color: var(--muted); font-size: 7px; font-style: normal; font-weight: 700; letter-spacing: .04em; white-space: nowrap; }
 .public-policies { border-top: 1px solid var(--border); padding: 7px 0 3px; }
 .public-policies h3 { margin: 0 0 3px; color: var(--muted); font-size: 8px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
 .public-policies b { font-size: 9px; font-weight: 600; }
@@ -289,10 +289,10 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
   .print-calendar .event-badges { display: none !important; }
   .print-calendar .schedule-block { display: block; padding: .4mm 0 .15mm; border-color: #bbb; }
   .print-calendar .schedule-block h3 { margin: 0 0 .15mm; color: #333; font-size: 7px; line-height: 1; letter-spacing: .02em; }
-  .print-calendar .schedule-block p { display: flex; flex-direction: row; align-items: baseline; justify-content: flex-start; gap: .8mm; margin: 0; font-size: 7px; line-height: 1.05; }
-  .print-calendar .schedule-block p span { flex: 0 0 7mm; color: #555; }
-  .print-calendar .schedule-block p b { width: auto; max-width: 23mm; color: #111; font-size: 7.5px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .print-calendar .copom-team { margin: 0; color: #444; font-size: 6.5px; line-height: 1; }
+  .print-calendar .schedule-block p { display: grid; grid-template-columns: 7mm 1fr auto; align-items: baseline; gap: .8mm; margin: 0; font-size: 7px; line-height: 1.05; }
+  .print-calendar .schedule-block p span { color: #555; }
+  .print-calendar .schedule-block p b { min-width: 0; color: #111; font-size: 7.5px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .print-calendar .copom-team { color: #444; font-size: 6.5px; line-height: 1; }
   .print-calendar .copom-team::before { content: '('; }
   .print-calendar .copom-team::after { content: ')'; }
   .print-calendar .public-policies { position: absolute; right: 1.4mm; bottom: .8mm; left: 1.4mm; display: flex; align-items: baseline; gap: 1mm; padding: .5mm 0 0; overflow: visible; border-color: #999; }
