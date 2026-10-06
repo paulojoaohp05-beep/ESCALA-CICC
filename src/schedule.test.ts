@@ -27,7 +27,7 @@ test('alterna corretamente também nas semanas anteriores à base', () => {
 test('substitui Bessane por Ana Romano a partir de 05/10/2026', () => {
   assert.equal(getTeamForDate(new Date(2026, 9, 1)).coordination.day, 'Bessane')
   assert.equal(getTeamForDate(new Date(2026, 9, 5)).coordination.day, 'Ana Romano')
-  assert.equal(getTeamForDate(new Date(2028, 0, 1)).coordination.day, getGroupForDate(new Date(2028, 0, 1)) === 'B' ? 'Ana Romano' : 'Deyse Kelly')
+  assert.equal(getTeamForDate(new Date(2028, 0, 1)).coordination.day, getGroupForDate(new Date(2028, 0, 1)) === 'B' ? 'Ana Romano' : 'Campos')
 })
 
 test('corresponde à validação completa de setembro de 2026', () => {
