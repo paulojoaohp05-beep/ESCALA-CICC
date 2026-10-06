@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { CalendarDays, ChevronLeft, ChevronRight, Grid2X2, List, Moon, Printer, Sun, Users } from 'lucide-react'
 import { getHolidaysForYear } from './brasilApiHolidays'
 import { getCommemorativeDate } from './commemorativeDates'
@@ -46,6 +46,8 @@ function App() {
   const [theme, setTheme] = useState<Theme>(getInitialTheme)
   const [holidaysByYear, setHolidaysByYear] = useState<Record<number, Holiday[]>>(() => Object.fromEntries(YEARS.map((year) => [year, getHolidays(year)])))
   const events = VISIBLE_EVENTS
+  const screenCalendarRef = useRef<HTMLDivElement>(null)
+  const scrollToTodayRequested = useRef(false)
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -59,6 +61,15 @@ function App() {
     })
     return () => { active = false }
   }, [])
+
+  useEffect(() => {
+    if (!scrollToTodayRequested.current) return
+    scrollToTodayRequested.current = false
+    screenCalendarRef.current?.querySelector('.is-today')?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'start',
+    })
+  }, [cursor])
 
   const days = useMemo(() => getCalendarDays(cursor.getFullYear(), cursor.getMonth()), [cursor])
   const monthDays = days.filter((day) => day.getMonth() === cursor.getMonth())
@@ -79,7 +90,11 @@ function App() {
   const years = YEARS
 
   const moveMonth = (amount: number) => setCursor((date) => new Date(date.getFullYear(), date.getMonth() + amount, 1))
-  const goToday = () => setCursor(new Date(today.getFullYear(), today.getMonth(), 1))
+  const goToday = () => {
+    const now = new Date()
+    scrollToTodayRequested.current = true
+    setCursor(new Date(now.getFullYear(), now.getMonth(), 1))
+  }
   const setMonth = (month: number) => setCursor((date) => new Date(date.getFullYear(), month, 1))
   const setYear = (year: number) => setCursor((date) => new Date(year, date.getMonth(), 1))
 
@@ -122,7 +137,7 @@ function App() {
             </div>
           </div>
 
-          <div className="screen-calendar">
+          <div className="screen-calendar" ref={screenCalendarRef}>
             {view === 'grid' ? (
               <div className="calendar-wrap">
                 <div className="week-header">{WEEKDAYS.map((day) => <div key={day}>{day}</div>)}</div>

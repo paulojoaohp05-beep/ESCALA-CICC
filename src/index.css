@@ -121,6 +121,7 @@ select { max-width: 150px; height: 38px; color: var(--text); border: 1px solid v
 .day-card:hover { background: var(--card-2); z-index: 2; box-shadow: inset 0 0 0 1px var(--border-strong); }
 .day-card.outside { opacity: .34; }
 .day-card.dimmed, .list-row.dimmed { opacity: .25; filter: saturate(.5); }
+.screen-calendar .is-today { scroll-margin-top: 84px; }
 .day-card.is-today, .list-row.is-today { box-shadow: inset 0 0 0 2px var(--group-a); background: color-mix(in srgb, var(--group-a-soft) 60%, var(--panel)); z-index: 3; }
 .day-top { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 11px; }
 .day-top > strong { font: 700 15px Manrope, sans-serif; }
